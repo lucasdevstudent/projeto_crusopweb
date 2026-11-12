@@ -1,11 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
-  output   = "../generated/prisma/client.js"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -13,11 +8,59 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  githubId  String   @unique
-  githubLogin String   @unique
-  name      String
-  avartarUrl String? @map("avatar_url")
-  createdAt DateTime @default(now()) @map("created_at")
+  id          Int         @id @default(autoincrement())
+  githubId    String      @unique
+  githubLogin String      @unique
+  name        String
+  avatarUrl   String?     @map("avatar_url")
+  createdAt   DateTime    @default(now()) @map("created_at")
+  profile     Profile?
+  meals       Meal[]
+  weights     WeightLog[]
   @@map("users")
+}
+
+model Profile {
+  userId    Int    @id
+  heightCm  Float
+  birthYear Int
+  sex       String
+  activity  Float
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Food {
+  id      Int        @id @default(autoincrement())
+  name    String     @unique
+  kcal    Float
+  protein Float
+  carbs   Float
+  fat     Float
+  items   MealItem[]
+}
+
+model Meal {
+  id     Int        @id @default(autoincrement())
+  userId Int
+  name   String
+  date   DateTime   @default(now())
+  user   User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items  MealItem[]
+}
+
+model MealItem {
+  id     Int   @id @default(autoincrement())
+  mealId Int
+  foodId Int
+  grams  Float
+  meal   Meal  @relation(fields: [mealId], references: [id], onDelete: Cascade)
+  food   Food  @relation(fields: [foodId], references: [id])
+}
+
+model WeightLog {
+  id     Int      @id @default(autoincrement())
+  userId Int
+  kg     Float
+  date   DateTime @default(now())
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

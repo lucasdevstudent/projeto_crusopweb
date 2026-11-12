@@ -1,6 +1,6 @@
 import { app } from "./app.js";
 import { env } from "./config/env.js";
- 
+
 app.listen(env.port, () => {
-    console.log(`Sinutre back está rodando em localhost:${env.port}`);
+  console.log(`API rodando em http://localhost:${env.port}`);
 });
